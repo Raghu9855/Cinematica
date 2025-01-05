@@ -1,0 +1,128 @@
+/* Button Styling */
+.remove-from-list {
+    background-color: #f44e42;  /* Bright red color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .remove-from-list i {
+    margin-right: 8px;  /* Space between icon and text */
+    font-size: 18px;  /* Size of the trash icon */
+  }
+  
+  /* Hover Effects */
+  .remove-from-list:hover {
+    transform: scale(1.1);  /* Slightly increase button size */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Add a shadow */
+    background-color: #d93e36;  /* Darker red color on hover */
+  }
+  
+  /* Focus and Active states */
+  .remove-from-list:focus {
+    outline: none;
+  }
+  
+  .remove-from-list:active {
+    transform: scale(0.98);  /* Button slightly shrinks when clicked */
+  }
+  
+  /* Icon styling */
+  .fas.fa-trash-alt {
+    font-size: 20px;
+    transition: transform 0.3s;
+  }
+  
+  .remove-from-list:hover i {
+    transform: rotate(180deg);  /* Rotate the trash icon on hover */
+  }
+  
+  /* Button Styling */
+.add-to-list {
+    background-color: #42f44e;  /* Green to signify positive action */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+    outline: none;
+  }
+  
+  /* Space between the icon and text */
+  .add-to-list i {
+    margin-right: 8px;  /* Adds space between the icon and text */
+    font-size: 18px;  /* Icon size */
+  }
+  
+  /* Hover Effects */
+  .add-to-list:hover {
+    transform: scale(1.1);  /* Slightly increase the size of the button */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  /* Adding shadow for depth */
+    background-color: #36d436;  /* Darker green on hover */
+  }
+  
+  /* Active Effects */
+  .add-to-list:active {
+    transform: scale(0.98);  /* Shrinks the button slightly when clicked */
+  }
+  
+  /* Icon Rotation */
+  .add-to-list:hover i {
+    transform: rotate(45deg);  /* Icon rotates when hovered */
+    transition: transform 0.3s;  /* Smooth transition for rotation */
+  }
+  
+  
+/* Button Styling */
+.watch-now-btn {
+    background-color: #000;  /* Dark background color for the button */
+    color: #fff;  /* White text color */
+    border: 2px solid #fff;  /* White border */
+    padding: 12px 30px;  /* Padding for a larger button */
+    border-radius: 50px;  /* Rounded corners */
+    font-size: 18px;  /* Bigger font for emphasis */
+    font-weight: bold;  /* Bold text for prominence */
+    text-transform: uppercase;  /* Uppercase letters for a modern look */
+    letter-spacing: 1px;  /* Slightly increased letter spacing */
+    cursor: pointer;  /* Pointer cursor on hover */
+    transition: all 0.3s ease;  /* Smooth transition on hover */
+  }
+  
+  /* Hover Effects */
+  .watch-now-btn:hover {
+    background-color: #ff6600;  /* Bright orange background on hover */
+    color: #000;  /* Change text to black on hover */
+    border: 2px solid #ff6600;  /* Border color changes to match the background */
+    transform: scale(1.1);  /* Slightly enlarge button on hover */
+  }
+  
+  /* Active Effects */
+  .watch-now-btn:active {
+    transform: scale(0.98);  /* Button slightly shrinks when clicked */
+  }
+  
+  /* Icon Styling (if you want to add an icon) */
+  .watch-now-btn i {
+    margin-right: 8px;  /* Adds space between the icon and text */
+    font-size: 20px;  /* Adjust icon size */
+  }
+  
+  /* Focus Effects (remove outline) */
+  .watch-now-btn:focus {
+    outline: none;
+  }
+  

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OTT Platform - Full-Screen Video</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Global reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Full-screen video setup */
+    body, html {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ensures the video fills the screen */
+      transition: opacity 0.5s ease; /* Smooth transition when controls are shown/hidden */
+    }
+
+    /* Title and Description Styles */
+    .title, .description {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      z-index: 2;
+      opacity: 0; /* Initially hide the title */
+      transition: opacity 0.5s ease-in-out; /* Fade in effect */
+    }
+
+    .title h3 {
+      font-size: 3rem;
+    }
+
+    .description p {
+      font-size: 1.5rem;
+    }
+
+    /* Show title on hover */
+    .video-container:hover .title {
+      opacity: 1;
+    }
+
+    /* Show video controls only when hovering over the video */
+    .video-container:hover video {
+      opacity: 1; /* Show video controls */
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .title h3 {
+        font-size: 2rem;
+      }
+      .description p {
+        font-size: 1rem;
+      }
+    }
+
+    /* Hide the default video container initially */
+    #video-player-container {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <% mov.forEach(movie => { %>
+      <!-- Watch Now Button -->
+      <button class="btn watch-now-btn btn-dark btn-outline-light" onclick="showVideo('<%= movie.trailers %>', '<%= movie.title %>', '<%= movie.description %>')">
+        Watch Now
+      </button>
+    <% }) %>
+  </div>
+
+  <!-- Full-Screen Video Player (Initially Hidden) -->
+  <div id="video-player-container" class="video-container">
+    <video id="video-player" controls autoplay>
+      <source id="video-source" src="" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <!-- Video Title (Hidden initially, shown on hover) -->
+    <div class="title">
+      <h3 id="video-title"></h3>
+    </div>
+    <!-- Optional description -->
+    <div class="description">
+      <p id="video-description"></p>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    // Function to show the video player with selected movie details
+    function showVideo(videoSrc, title, description) {
+      // Set the video source, title, and description dynamically
+      document.getElementById('video-source').src = "/" + videoSrc;
+      document.getElementById('video-title').textContent = title;
+      document.getElementById('video-description').textContent = description;
+
+      // Show the video player container and hide the Watch Now button
+      document.getElementById('video-player-container').style.display = 'block';
+      document.querySelector('.container').style.display = 'none'; // Hide the Watch Now buttons
+    }
+  </script>
+
+</body>
+</html>

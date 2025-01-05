@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinematica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/search.css">
+    <link rel="shortcut icon" href="/images/img4.png" type="image/x-icon">
+    <style>
+        /* Movie List Styling */
+        .movie-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .movie-list li {
+            margin: 5px 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Header Link Hover */
+        .nav-link:hover {
+            color: #FFD700;
+            /* text-decoration: underline; */
+        }
+
+        /* Search Bar
+        .search-bar {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar input {
+            width: 200px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+
+        .search-bar button {
+            border-radius: 20px;
+        } */
+
+        /* Custom CSS for Hamburger Menu */
+.navbar-toggler-icon {
+  background-color: #F87A53; /* Custom color */
+}
+
+
+        /* Button Hover Effects */
+        .btn-warning:hover, .btn-outline-secondary:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        /* Sticky Header Background */
+        .sticky-top {
+            background: rgba(24, 18, 43, 0.9); /* Semi-transparent */
+            backdrop-filter: blur(5px); /* Adds blur effect */
+        }
+        /* Adjust logo size */
+.logo-img {
+  max-width: 40px;
+  height: auto;
+}
+
+.logo-text {
+  font-size: 1.8rem;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0px;
+}
+
+/* Make the navigation items responsive */
+@media (max-width: 768px) {
+  .nav {
+    display: none; /* Hide navigation links on small screens */
+  }
+
+  .d-flex.align-items-center {
+    flex-direction: row; /* Stack elements vertically */
+    align-items: flex-start; /* Align elements to the left */
+  }
+
+  /* Adjust the header layout for small screens */
+  .container-fluid {
+    flex-direction: column; /* Stack the logo and the other elements */
+    align-items: flex-start; /* Align elements to the left */
+  }
+
+  /* Adjust the logo and text on smaller screens */
+  .logo-img {
+    max-width: 30px; /* Make logo smaller */
+  }
+
+  .logo-text {
+    font-size: 1.5rem; /* Adjust text size */
+  }
+
+  /* Show a hamburger menu for navigation */
+  .nav-toggler {
+    display: block;
+    background-color: #F87A53;
+    border: none;
+    padding: 10px;
+  }
+
+  .nav-toggler span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px 0;
+    background-color: white;
+  }
+}
+
+@media (max-width: 576px) {
+  .logo-text {
+    font-size: 1.2rem; /* Further reduce font size on extra small screens */
+  }
+
+  .btn-warning {
+    font-size: 0.8rem; /* Adjust button font size on smaller screens */
+  }
+}
+
+        
+    </style>
+</head>
+<body style="background-color: #18122B;">
+  <header class="p-3 sticky-top">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <!-- Left Side: Logo (Horizontal in all devices) -->
+      <div class="d-flex align-items-center">
+        <!-- Logo -->
+        <a href="/" class="d-flex align-items-center text-white text-decoration-none me-3">
+          <img src="/images/img4.png" alt="Cinematica Logo" title="Cinematica" class="logo-img">
+          <h1 class="fw-bold m-0 logo-text" style="font-size: 1.8rem; font-family: 'Poppins', sans-serif;">
+            <span class="text-primary" style="text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);">C</span>
+            <span class="text-danger" style="text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6); color: #F87A53;">I</span>
+            <span class="text-warning" style="text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);">T</span>
+          </h1>
+        </a>
+      </div>
+  
+      <!-- Middle Section: Navigation Links (Visible on Medium and Larger Screens Only) -->
+      <div class="d-none d-md-flex align-items-center">
+        <!-- Navigation Links -->
+        <ul class="nav mb-0">
+          <li><a href="/home?email=<%= user.email %>" class="nav-link px-3 text-light" title="Home" style="letter-spacing: 1px;">Home</a></li>
+          <li><a href="movies?email=<%= user.email %>" class="nav-link px-3 text-light" title="Movies" style="letter-spacing: 1px;">Movies</a></li>
+          <li><a href="contact" class="nav-link px-3 text-light" title="Contact" style="letter-spacing: 1px;">Contact</a></li>
+          <li>
+            <button type="button" class="btn btn-warning" style="border-radius: 60px;">
+              <a href="subscription" class="text-decoration-none text-dark" title="Subscription">Subscription</a>
+            </button>
+          </li>
+        </ul>
+      </div>
+  
+      <!-- Right Side: Login, Signup, User Icon, Hamburger Menu for Small Devices -->
+      <div class="d-flex align-items-center">
+        <!-- Login and Signup Buttons
+        <button type="button" class="btn btn-outline-secondary text-light me-2">
+          <a href="login" class="text-decoration-none text-light" title="Login">Login</a>
+        </button>
+        <button type="button" class="btn btn-warning me-3">
+          <a href="signup" class="text-decoration-none text-dark" title="Sign-up">Sign-up</a>
+        </button> -->
+  
+        <!-- User Icon -->
+        <% if (user) { %>
+          <!-- User Icon and Profile Link -->
+          <a href="/profile?email=<%= user.email %>" class="text-decoration-none">
+              <img src="/images/profile.png" alt="User Profile Icon" title="Your Profile" style="width: 30px; height: 30px; margin-right: 20px;">
+          </a>
+      <% } else { %>
+          <!-- Login and Signup Links (if user is not logged in) -->
+          <a href="/login" class="text-decoration-none">
+              <button type="button" class="btn btn-outline-secondary text-light">Login</button>
+          </a>
+      <% } %>
+  
+        <!-- Hamburger Menu for Small Devices -->
+        <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <i class="bi bi-list text-light"></i> <!-- Bootstrap Icon for Hamburger -->
+        </button>
+      </div>
+    </div>
+  
+    <!-- Collapsible Navigation for Small Devices -->
+    <div class="collapse navbar-collapse d-md-none" id="navbarNav">
+      <ul class="navbar-nav">
+        <!-- Dropdown for Navigation Links -->
+        <li><a href="/home" class="nav-link px-3 text-light" title="Home">Home</a></li>
+        <li><a href="movies" class="nav-link px-3 text-light" title="Movies">Movies</a></li>
+        <li><a href="contact" class="nav-link px-3 text-light" title="Contact">Contact</a></li>
+        <li>
+          <button type="button" class="btn btn-warning" style="border-radius: 60px;">
+            <a href="subscription" class="text-decoration-none text-dark" title="Subscription">Subscription</a>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </header>
+  
+  
+  
+  
+  
+
+  
+</body>
+</html>
+
+  
+  

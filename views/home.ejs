@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinematica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/button.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="shortcut icon" href="/images/img4.png" type="image/x-icon">
+    <Style>
+   
+/* Ensure the cards are responsive */
+@media (max-width: 768px) {
+    .carousel-inner .carousel-item {
+        padding: 0 15px; /* Add padding for smaller screens */
+        display: flex;
+        overflow-x: auto; /* Enable horizontal scrolling */
+    }
+    
+    .card {
+        border-radius: 15px; /* Slightly reduce border radius for small screens */
+    }
+
+    .card-img-top {
+        height: 250px; /* Fixed height for images on small devices */
+        object-fit: cover; /* Ensure images maintain aspect ratio */
+    }
+
+    /* Ensure the carousel controls are easy to use on small screens */
+    .carousel-control-prev, .carousel-control-next {
+        width: 5%; /* Make the controls smaller */
+    }
+}
+
+@media (max-width: 576px) {
+    .col-md-4 {
+        /* Stack cards in a single column on extra small screens */
+        width: 100% !important;
+    }
+
+    .card {
+        margin-bottom: 20px; /* Space between stacked cards */
+    }
+
+    .carousel-control-prev, .carousel-control-next {
+        width: 10%; /* Slightly adjust control size for extra small devices */
+    }
+}
+.card .serial-number {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-size: 2rem;
+    padding: 15px;
+    border-radius: 50%;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+
+    </Style>
+    
+</head>
+<body>
+    <%- include ("partials/header.ejs") %>
+    <div class="slide">
+      <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators" id="carouselIndicators">
+          <!-- Indicators will be dynamically populated -->
+        </div>
+        <div class="carousel-inner" id="carouselInner">
+          <!-- Carousel items will be dynamically populated -->
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+    
+    
+    
+
+
+
+
+    <div class="container my-5">
+      <h2 class="text-center mb-4 text-light"><span class="trending"></span></h2>
+      <div id="trendingCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+              <% for (let i = 0; i < trendingmovies.length; i += 3) { %>  <!-- Loop in groups of 3 -->
+                  <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                      <div class="row">
+                          <% for (let j = i; j < i + 3 && j < trendingmovies.length; j++) { %>  <!-- Create 3 cards per slide -->
+                              <div class="col-md-4 col-12 mb-4">
+                                <div class="card h-100" style="height: 100%; cursor: pointer; border-color: black; border-radius: 20px; position: relative;">
+                                  <img src="<%= trendingmovies[j].image_url %>" class="card-img-top" alt="<%= trendingmovies[j].title %>">
+                                  
+                                  <!-- Serial number -->
+                                  <div class="serial-number">
+                                      <span><%= j + 1 %></span> <!-- Serial number (1-6) -->
+                                  </div>
+                              
+                                  <div class="card-body d-flex flex-column bg-dark text-light">
+                                      <h5 class="card-title"><%= trendingmovies[j].title %></h5>
+                                      <p class="card-text flex-grow-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= trendingmovies[j].description %></p>
+                                  </div>
+                                  <div class="card-footer bg-dark text-light">
+                                      <button class="btn btn-outline-light w-50">Watch Now</button>
+                                  </div>
+                              </div>
+                              
+                              </div>
+                          <% } %>
+                      </div>
+                  </div>
+              <% } %>
+          </div>
+          <!-- Carousel controls -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#trendingCarousel" data-bs-slide="prev">
+              <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#trendingCarousel" data-bs-slide="next">
+              <span class="visually-hidden">Next</span>
+          </button>
+      </div>
+  </div>
+  
+    
+
+
+
+
+    <div class="container my-5">
+        <h2 class="text-center mb-4 text-light">My List</h2>
+        <div class="row">
+            <% mylist.forEach(item => { %>
+                <div class="col-md-4 mb-4" id="movie-<%= item.id %>">
+                    <div class="card h-100">
+                        <img src="<%= item.image_path %>" class="card-img-top" alt="<%= item.title %>">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= item.title %></h5>
+                            <p class="card-text">Genre: <%= item.genre %></p>
+                        </div>
+                        <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                          <!-- Watch Now Button -->
+                          <button type="button" class="btn btn-dark btn-outline-light">
+                            <i class="fas fa-play-circle"></i> Watch Now
+                          </button>
+                        
+                          <!-- Remove from List Button -->
+                          <button class="remove-from-list" data-movie-id="<%= item.movie_id %>">
+                            <i class="fas fa-trash-alt"></i> Remove from List
+                          </button>
+                        </div>
+                        
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+    
+    <script>
+document.querySelectorAll('.remove-from-list').forEach(button => {
+  button.addEventListener('click', function() {
+    const movieId = this.getAttribute('data-movie-id'); // Get the movie ID from the button's data attribute
+
+    // Send POST request to remove from list
+    fetch('/remove-from-list', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json' // Set the content type to JSON
+      },
+      body: JSON.stringify({ movieId }) // Send movieId in the request body
+    })
+    .then(response => {
+      if (response.ok) {
+        // If successful, remove the movie from the UI and refresh the page
+        const movieItem = this.closest('.movie-item'); // Find the closest parent with class '.movie-item'
+        if (movieItem) {
+          movieItem.remove(); // Remove the movie item from the UI
+        }
+        alert('Movie removed from list'); // Show success message
+        location.reload(); // Refresh the page after the movie is removed
+      } else {
+        alert('Error removing from list'); // Show error message if there's an issue
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error); // Log error for debugging
+      alert('Error removing from list');
+    });
+  });
+});
+
+    </script>
+     <script src="/js/home.js"></script>
+    <script>
+      // Wait for the DOM to be fully loaded before initializing the carousel
+      document.addEventListener('DOMContentLoaded', function () {
+        var myCarousel = new bootstrap.Carousel(document.getElementById('carouselExampleCaptions'), {
+          interval: 1800, // Slide change interval (5000 ms = 5 seconds)
+          ride: 'carousel', // Ensure the carousel starts automatically
+        });
+      });
+    </script>
+    
+    
+        
+
+   
+    <%- include ("partials/footer.ejs") %>
+    </body>
+    </html>
+
+
+
+
+
+
+
+
+
+
+
+
