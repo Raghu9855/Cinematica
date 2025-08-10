@@ -1,0 +1,11 @@
+import express from 'express';
+import * as movieController from '../controllers/movieController.js';
+const router = express.Router();
+router.get('/home', movieController.showHomePage);
+router.get('/movies', movieController.showAllMovies);
+router.get('/search', movieController.showSearchPage);
+router.get('/api/movies', movieController.searchMoviesAPI);
+router.get('/api/recent-movies', movieController.getRecentMoviesAPI);
+router.post('/add-to-list', movieController.addMovieToList);
+router.post('/remove-from-list', movieController.removeMovieFromList);
+export default router;

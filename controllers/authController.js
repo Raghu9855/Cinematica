@@ -1,205 +1,137 @@
-import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
-import bodyParser from "body-parser";
-import session from "express-session";
-import flash from "connect-flash";
 import bcrypt from "bcryptjs";
-import { db } from "../db.js";
-import dotenv from "dotenv";
-import crypto from 'crypto';
+import * as User from '../models/User.js'; // Import our new model functions
 
-
-// controllers/authController.js (temporary placeholders)
-
+// Renders the signup page
 export const getSignupPage = (req, res) => {
-    res.render(path.join(__dirname, "/views/signup.ejs"), {
-        username: "",
-        email: "",
-        password: "",
-        messages: req.flash(),
-    });
-}
-export const handleSignup = async(req, res) => {
+    res.render("signup.ejs", { messages: req.flash() });
+};
+
+// Handles the logic for the signup form submission
+export const handleSignup = async (req, res) => {
     const { username, email, password } = req.body;
-    console.log(req.body);
 
-    // Input Validation
-    if (!username || !email || !password) {
-        req.flash("error", "All fields are required.");
-        return res.redirect("/signup");
-    }
-
-    if (!/^[\w.-]+@[\w.-]+\.\w{2,}$/.test(email)) {
-        req.flash("error", "Please enter a valid email address.");
+    if (!username || !email || !password || !/^[\w.-]+@[\w.-]+\.\w{2,}$/.test(email)) {
+        req.flash("error", "Please provide valid information for all fields.");
         return res.redirect("/signup");
     }
 
     try {
-        // Hash the Password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Insert User into Database
-        const user = { username, email, password: hashedPassword };
-        db.query("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", 
-            [username, email, hashedPassword], (err) => {
-                if (err) {
-            req.flash("error", "Database error occurred: " + err.message);
+        // Use the Model to check if the user exists
+        const existingUser = await User.findByEmail(email);
+        if (existingUser) {
+            req.flash("error", "An account with this email already exists.");
             return res.redirect("/signup");
         }
+        
+        // Use the Model to create the user
+        await User.createUser(username, email, password);
 
-        req.flash("success", "User registered successfully!");
+        req.flash("success", "Registration successful! Please log in.");
         res.redirect("/login");
-    });
-
     } catch (error) {
-        req.flash("error", "Server error occurred: " + error.message);
+        req.flash("error", "A server error occurred during registration.");
         res.redirect("/signup");
     }
-}
+};
 
-export const getLoginPage =  (req, res) => {
-    res.render(path.join(__dirname, "/views/login.ejs"), {
-        email: "",
-        password: "",
-        messages: req.flash()
-    });
-}
+// Renders the login page
+export const getLoginPage = (req, res) => {
+    res.render("login.ejs", { messages: req.flash() });
+};
 
-
-export const handleLogin = (req, res) => {
+// Handles the logic for the login form submission
+export const handleLogin = async (req, res) => {
     const { email, password } = req.body;
 
-    // Input Validation
     if (!email || !password) {
         req.flash("error", "Both email and password are required.");
         return res.redirect("/login");
     }
 
     try {
-        // Check if user exists in database
-        db.query("SELECT * FROM users WHERE email = ?", [email], async (err, result) => {
-            if (err) {
-                req.flash("error", "Database error occurred: " + err.message);
-                return res.redirect("/login");
-            }
+        // Use the Model to find the user
+        const user = await User.findByEmail(email);
+        if (!user) {
+            req.flash("error", "Invalid credentials.");
+            return res.redirect("/login");
+        }
 
-            if (result.length === 0) {
-                req.flash("error", "No user found with this email. Please sign up.");
-                return res.redirect("/signup");
-            }
+        // The controller handles comparing the password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            req.flash("error", "Invalid credentials.");
+            return res.redirect("/login");
+        }
 
-            // Compare the provided password with the hashed password in the database
-            const user = result[0];
-            const isMatch = await bcrypt.compare(password, user.password);
-            const isAdmin = user.role === "admin";
-            if (isAdmin) {
-                return res.redirect("/admin");
-            } else {
-                if (!isMatch) {
-                    req.flash("error", "Invalid password. Please try again.");
-                    return res.redirect("/login");
-                }
-               
-    
-                // If login is successful, redirect to the home page
-                req.flash("success", "Login successful!");
-                res.redirect(`/home?email=${email}`);  // Assuming you have a home page
-            }
-            
-        });
+        // Login successful, handle session here
+        // For example: req.session.userId = user.id;
+
+        if (user.role === "admin") {
+            return res.redirect("/admin");
+        }
+        res.redirect(`/home?email=${email}`);
+
     } catch (error) {
-        req.flash("error", "Server error occurred: " + error.message);
+        req.flash("error", "A server error occurred during login.");
         res.redirect("/login");
     }
-}
+};
 
-
+// Display forgot password page
 export const getForgotPasswordPage = (req, res) => {
     res.render("fpassword.ejs");
-}
+};
 
-
-export const handleForgotPassword = (req, res) => {
+// Handle forgot password submission
+export const handleForgotPassword = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
         return res.status(400).send('Email is required.');
     }
 
-    // Check if the email exists in the database
-    db.query('SELECT * FROM users WHERE email = ?', [email], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Database error.');
-        }
-
-        if (results.length === 0) {
-            return res.status(404).send('No account found with that email.');
-        }
-
-        // Generate a reset token and expiration
-        const resetToken =crypto.randomBytes(32).toString('hex');
-        const resetTokenExpiration = new Date(Date.now() + 3600000); // Token valid for 1 hour
-
-        // Update the user's record with the reset token and expiration
-        db.query(
-            'UPDATE users SET reset_token = ?, reset_token_expiration = ? WHERE email = ?',
-            [resetToken, resetTokenExpiration, email],
-            (err) => {
-                if (err) {
-                    console.error(err);
-                    return res.status(500).send('Error updating user record.');
-                }
-
-                // Optionally log the token (for testing purposes)
-                console.log(`Reset token for ${email}: ${resetToken}`);
-
-                // Render a success message or redirect
-                res.redirect('rpassword');
-            }
-        );
-    });
-}
-
-
-export const getResetPasswordPage = (req, res) => {
-    const token = req.query.token || ''; // If a token is passed in the query
-    res.render("rpassword.ejs", { token});
-}
-
-
-export const handleResetPassword =(req, res) => {
-    const { email, newPassword } = req.body;  // Using email to identify the user
-
-    if (!email || !newPassword) {
-        return res.status(400).send('Email and new password are required.');
-    }
-
     try {
-        // Query the database to find the user by their email
-        db.query(
-            'SELECT * FROM users WHERE email = ?',
-            [email],
-            async (err, results) => {
-                if (err) return res.status(500).send('Database error.');
-                if (results.length === 0) return res.status(400).send('User not found.');
+        // Use the Model to find the user
+        const user = await User.findByEmail(email);
 
-                // Hash the new password before storing it
-                const hashedPassword = await bcrypt.hash(newPassword, 10);
+        // Security Note: We respond the same way even if the user isn't found
+        // This prevents people from guessing registered emails.
+        if (user) {
+            // Generate a reset token and expiration
+            const resetToken = crypto.randomBytes(32).toString('hex');
+            const resetTokenExpiration = new Date(Date.now() + 3600000); // 1 hour
 
-                // Update the user's password in the database
-                db.query(
-                    'UPDATE users SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE email = ?',
-                    [hashedPassword, email],
-                    (err) => {
-                        if (err) return res.status(500).send('Error updating password.');
-                        res.render('reset_success.ejs'); // Password reset success page
-                    }
-                );
-            }
-        );
+            // Use the Model to save the token
+            await User.updateResetToken(email, resetToken, resetTokenExpiration);
+
+            console.log(`Reset token for ${email}: ${resetToken}`);
+        }
+        
+        // Redirect to the reset password page or show a confirmation
+        res.redirect('/rpassword');
+
     } catch (error) {
-        res.status(500).send('Error resetting password.');
+        console.error(error);
+        res.status(500).send('A server error occurred.');
     }
-}
+};
+
+// Display reset password page
+export const getResetPasswordPage = (req, res) => {
+    res.render("rpassword.ejs");
+};
+
+// Handle reset password submission
+export const handleResetPassword = async (req, res) => {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+        return res.status(400).send("Email and new password are required.");
+    }
+    try {
+        // Use the Model to update the password
+        await User.updatePassword(email, newPassword);
+        res.render('reset_success.ejs');
+    } catch (error) {
+        res.status(500).send("Error resetting password.");
+    }
+};
