@@ -29,21 +29,6 @@ app.use(session({
 app.use(flash());
 app.set("view engine", "ejs");
 
-
-
-
-
-
-
-
-
-// app.get('/home', (req, res) => {
-//     res.render(path.join(__dirname, "/views/home.ejs"), { movies: [] });  // Render the EJS page with an empty array (no results)
-// });
-
-
-
-
 // --- Mount Routers ---
 // The order can matter if routes are similar, but these are distinct.
 app.use('/', pageRoutes);      // Handles /, /contact, etc.
@@ -51,17 +36,6 @@ app.use('/', authRoutes);      // Handles /login, /signup
 app.use('/', movieRoutes);     // Handles /home, /movies
 app.use('/', userRoutes);      // Handles /profile
 app.use('/admin', adminRoutes); // Handles all routes prefixed with /admin
-
-
-
-
-
-
-
-
-
-
-
 
 app.listen(port,()=>{
     console.log(`the server is running on ${port}`);
