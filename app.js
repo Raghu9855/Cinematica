@@ -42,6 +42,7 @@ app.use('/', movieRoutes);     // Handles /home, /movies
 app.use('/', userRoutes);      // Handles /profile
 app.use('/admin', adminRoutes); // Handles all routes prefixed with /admin
 
+// --- Error Handling Middleware ---
 app.listen(port,()=>{
     console.log(`the server is running on ${port}`);
 });
