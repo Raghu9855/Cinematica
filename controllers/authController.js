@@ -82,37 +82,28 @@ export const getForgotPasswordPage = (req, res) => {
     res.render("fpassword.ejs");
 };
 
-// Handle forgot password submission
+
 export const handleForgotPassword = async (req, res) => {
-    const { email } = req.body;
-
-    if (!email) {
-        return res.status(400).send('Email is required.');
-    }
-
     try {
-        // Use the Model to find the user
+        const { email } = req.body;
+
         const user = await User.findByEmail(email);
 
-        // Security Note: We respond the same way even if the user isn't found
-        // This prevents people from guessing registered emails.
         if (user) {
-            // Generate a reset token and expiration
-            const resetToken = crypto.randomBytes(32).toString('hex');
-            const resetTokenExpiration = new Date(Date.now() + 3600000); // 1 hour
-
-            // Use the Model to save the token
-            await User.updateResetToken(email, resetToken, resetTokenExpiration);
-
-            console.log(`Reset token for ${email}: ${resetToken}`);
+            // The model generates and saves the token
+            const token = await User.updateResetToken(email);
+            
+            // For testing, we log the token
+            console.log(`Password reset token for ${email}: ${token}`);
         }
         
-        // Redirect to the reset password page or show a confirmation
+        // --- THIS IS THE CHANGE ---
+        // Instead of sending text, redirect the user to the next step.
         res.redirect('/rpassword');
 
     } catch (error) {
-        console.error(error);
-        res.status(500).send('A server error occurred.');
+        console.error('Error in forgot password process:', error);
+        res.status(500).send("A server error occurred.");
     }
 };
 

@@ -7,19 +7,15 @@ export const showHomePage = async (req, res) => {
     if (!email) {
         return res.redirect("/login");
     }
-
     try {
         const user = await User.findByEmail(email);
         if (!user) {
             return res.redirect("/login");
         }
-
-        // Use the model to get all data in parallel for efficiency
         const [trendingMovies, myList] = await Promise.all([
             Movie.getTrending(),
-            Movie.getMyList() // In a real app, you'd pass a user ID here
+            Movie.getMyList()
         ]);
-
         res.render("home", {
             trendingmovies: trendingMovies,
             mylist: myList,
@@ -32,21 +28,43 @@ export const showHomePage = async (req, res) => {
 };
 
 // Renders the page that shows all available movies.
+// -- THIS FUNCTION HAS BEEN CORRECTED --
 export const showAllMovies = async (req, res) => {
+    const email = req.query.email;
+    if (!email) {
+        return res.redirect("/login");
+    }
+
     try {
+        // 1. Fetch the user's data using the User model
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.redirect("/login");
+        }
+
+        // 2. Fetch the list of all movies
         const movies = await Movie.getAll();
-        res.render('movies', { movies });
+
+        // 3. Pass BOTH the movies and the user object to the view
+        res.render('movies', {
+            movies: movies,
+            user: user
+        });
+
     } catch (error) {
         console.error('Error fetching all movies:', error);
         res.status(500).send("Internal Server Error");
     }
 };
 
+
 // Renders the search page.
 export const showSearchPage = async (req, res) => {
-    // This function can just reuse the logic for showing all movies
+    // This now correctly passes user data because it calls the fixed showAllMovies function
     await showAllMovies(req, res);
 };
+
+// --- The rest of your controller functions remain the same ---
 
 // Handles the API request for searching movies and returns JSON.
 export const searchMoviesAPI = async (req, res) => {
@@ -67,7 +85,7 @@ export const searchMoviesAPI = async (req, res) => {
 export const addMovieToList = async (req, res) => {
     try {
         await Movie.addToList(req.body.movieId);
-        res.redirect('back'); // Redirects the user to the page they came from
+        res.redirect('back');
     } catch (error) {
         res.status(400).send(error.message);
     }

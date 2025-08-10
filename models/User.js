@@ -20,15 +20,19 @@ export const createUser = async (username, email, password) => {
     return result.insertId; // Returns the ID of the newly created user
 };
 
-// Updates a user's record with a password reset token
+// This function now handles the entire process of creating and saving a reset token.
 export const updateResetToken = async (email) => {
+    // 1. Generate token and expiration here, inside the model.
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenExpiration = new Date(Date.now() + 3600000); // Token is valid for 1 hour
+    const resetTokenExpiration = new Date(Date.now() + 3600000); // 1 hour
 
+    // 2. Save them to the database.
     await db.promise().query(
         "UPDATE users SET reset_token = ?, reset_token_expiration = ? WHERE email = ?",
         [resetToken, resetTokenExpiration, email]
     );
+
+    // 3. Return the token so the controller can log it for testing.
     return resetToken;
 };
 

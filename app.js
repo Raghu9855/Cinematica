@@ -5,6 +5,11 @@ import bodyParser from "body-parser";
 import session from "express-session";
 import flash from "connect-flash";
 import dotenv from "dotenv";
+import authRoutes from './routes/authRoutes.js';
+import movieRoutes from './routes/movieRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import pageRoutes from './routes/pageRoutes.js'; 
 
 
 dotenv.config();
